@@ -13,10 +13,13 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // Map Modal Logic start
   const openMapHandler = () => setShowMap(true);
 
   const closeMapHandler = () => setShowMap(false);
+  // Map Modal Logic ends
 
+  // Delete Confirmation Modal logic start
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -29,6 +32,7 @@ const PlaceItem = (props) => {
     console.log("Deleting Place.....");
     setShowConfirmModal(false);
   };
+  // Delete Confirmation Modal logic ends
 
   return (
     <React.Fragment>
