@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 // Import all Components here
 import Card from "../../shared/components/UIElements/Card";
@@ -13,10 +13,15 @@ import {
 // Import Custom Hooks
 import { useForm } from "../../shared/hooks/form-hook";
 
+// Import contexts
+import { AuthContext } from "../../shared/context/AuthContext";
+
 // Import all CSS files here
 import "./Auth.css";
 
 const Auth = (props) => {
+  const auth = useContext(AuthContext);
+
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -62,6 +67,7 @@ const Auth = (props) => {
   const authSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
+    auth.login();
   };
 
   return (
