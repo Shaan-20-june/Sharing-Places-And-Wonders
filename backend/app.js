@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 // Import routers
 const placesRoutes = require("./routes/places-routes");
@@ -28,6 +29,22 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5000, () => {
-  console.log("Server is listening on PORT 5000.");
-});
+// WonderfulPlaces is the DataBase Name
+const url =
+  "mongodb+srv://santanu_dutta:mern_project_1@cluster0.1khtpes.mongodb.net/WonderfulPlaces?retryWrites=true&w=majority";
+
+const connectConfig = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+mongoose
+  .connect(url, connectConfig)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log("Server is listening on PORT 5000.");
+    });
+  })
+  .catch((err) => {
+    console.log("Error :" + err.message);
+  });
