@@ -61,7 +61,7 @@ const NewPlace = (props) => {
           "Content-Type": "application/json",
         }
       );
-      history.push("/");
+      history.push(`/${auth.userId}/places`);
     } catch (error) {}
   };
 
