@@ -7,6 +7,7 @@ const getCoordsForAddress = require("../utils/location");
 const Place = require("../models/place-model");
 const User = require("../models/user-model");
 
+//#region => get a place by place ID controller starts
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
 
@@ -27,7 +28,9 @@ const getPlaceById = async (req, res, next) => {
 
   res.json({ place: place.toObject({ getters: true }) });
 };
+//#endregion => get a place by place ID controller ends
 
+//#region => get places by user ID controller starts
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let userWithPlaces;
@@ -52,7 +55,9 @@ const getPlacesByUserId = async (req, res, next) => {
     ),
   });
 };
+//#endregion => get places by user ID controller ends
 
+//#region => create place controller starts
 const createPlace = async (req, res, next) => {
   // Validation of data from request starts
   const errors = validationResult(req);
@@ -73,7 +78,7 @@ const createPlace = async (req, res, next) => {
   }
   // Validation of data from request ends
 
-  const { title, description, creator, address, image } = req.body;
+  const { title, description, address, image } = req.body;
 
   // Fetching coordinates from geocode API starts
   let coordinates;
@@ -91,12 +96,12 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   });
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (error) {
     return next(new HttpError("Creating place failed, please try again!", 500));
   }
@@ -120,7 +125,9 @@ const createPlace = async (req, res, next) => {
 
   res.status(201).json({ place: newPlace.toObject() });
 };
+//#endregion => create place controller ends
 
+//#region => update place controller starts
 const updatePlace = async (req, res, next) => {
   // Validation of data from request starts
   const errors = validationResult(req);
@@ -151,6 +158,10 @@ const updatePlace = async (req, res, next) => {
       return next(
         new HttpError("Could not find place, please validate inputs!", 500)
       );
+    } else if (placeToUpdate.creator.toString() !== req.userData.userId) {
+      return next(
+        new HttpError("You are not allowed to edit this place!", 401)
+      );
     }
     placeToUpdate.title = title;
     placeToUpdate.description = description;
@@ -161,7 +172,9 @@ const updatePlace = async (req, res, next) => {
 
   res.status(200).json({ place: placeToUpdate.toObject({ getters: true }) });
 };
+//#endregion => update place controller ends
 
+//#region => delete place controller starts
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
   let placeToDelete;
@@ -175,6 +188,12 @@ const deletePlace = async (req, res, next) => {
 
   if (!placeToDelete) {
     return next(new HttpError("Could not find Place!", 404));
+  }
+
+  if (placeToDelete.creator.id !== req.userData.userId) {
+    return next(
+      new HttpError("You are not allowed to delete this place!", 401)
+    );
   }
 
   const imagePath = placeToDelete.image;
@@ -199,6 +218,7 @@ const deletePlace = async (req, res, next) => {
 
   res.status(200).send({ message: "Deleted place!" });
 };
+//#endregion => delete place controller ends
 
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
