@@ -61,7 +61,7 @@ const connectConfig = {
 mongoose
   .connect(url, connectConfig)
   .then(() => {
-    app.listen(process.env.PORT || 5000, () => {
+    app.listen(5000, () => {
       console.log("Server is listening on PORT 5000.");
     });
   })
