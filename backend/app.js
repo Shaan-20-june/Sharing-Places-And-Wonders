@@ -51,8 +51,7 @@ app.use((error, req, res, next) => {
 });
 
 // WonderfulPlaces is the DataBase Name
-const url =
-  "mongodb+srv://santanu_dutta:mern_project_1@cluster0.1khtpes.mongodb.net/WonderfulPlaces?retryWrites=true&w=majority";
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.1khtpes.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 const connectConfig = {
   useNewUrlParser: true,
@@ -62,10 +61,10 @@ const connectConfig = {
 mongoose
   .connect(url, connectConfig)
   .then(() => {
-    app.listen(5000, () => {
+    app.listen(process.env.PORT || 5000, () => {
       console.log("Server is listening on PORT 5000.");
     });
   })
   .catch((err) => {
-    console.log("Error :" + err.message);
+    console.log("Error : " + err.message);
   });
